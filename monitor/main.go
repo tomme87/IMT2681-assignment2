@@ -1,9 +1,19 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"github.com/jasonlvhit/gocron"
+)
+
+func task() {
+	fmt.Println("I am runnning task.")
+}
 
 func main() {
 	fmt.Println("monitor run")
+
+	gocron.Every(1).Minute().Do(task)
+	<- gocron.Start()
 }
 
 

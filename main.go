@@ -3,6 +3,8 @@ package main
 import (
 	"net/http"
 	"os"
+	"github.com/jasonlvhit/gocron"
+	"fmt"
 )
 
 const (
@@ -14,6 +16,10 @@ const (
 )
 
 var db WebhooksStorage
+
+func task() {
+	fmt.Println("I am runnning task.")
+}
 
 func main() {
 	port := os.Getenv("PORT") // Get port from environment variable. Needed to deploy on heruko.
@@ -38,6 +44,9 @@ func main() {
 	http.HandleFunc(basePath + latestPath, handleLatest)
 	http.HandleFunc(basePath + averagePath, handleAverage)
 	http.HandleFunc(basePath + evaluationTriggerPath, handleEvaluationTrigger)
+
+	gocron.Every(1).Minute().Do(task)
+	<- gocron.Start()
 
 	http.ListenAndServe(":"+port, nil)
 }
