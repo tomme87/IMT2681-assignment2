@@ -39,5 +39,5 @@ func main() {
 	http.HandleFunc(basePath + averagePath, handleAverage)
 	http.HandleFunc(basePath + evaluationTriggerPath, handleEvaluationTrigger)
 
-	http.ListenAndServe(":8080", nil)
+	http.ListenAndServe(":"+port, nil)
 }
