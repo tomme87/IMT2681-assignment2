@@ -13,7 +13,7 @@ func main() {
 	fmt.Println("monitor run")
 
 	gocron.Every(1).Minute().Do(task)
-	gocron.Start()
+	<- gocron.Start()
 }
 
 
