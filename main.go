@@ -46,7 +46,7 @@ func main() {
 	http.HandleFunc(basePath + evaluationTriggerPath, handleEvaluationTrigger)
 
 	gocron.Every(1).Minute().Do(task)
-	<- gocron.Start()
+	go gocron.Start()
 
 	http.ListenAndServe(":"+port, nil)
 }
