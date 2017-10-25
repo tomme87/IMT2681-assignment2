@@ -1,4 +1,4 @@
-package main
+package api
 
 import (
 	"net/http"
@@ -7,8 +7,18 @@ import (
 	"strings"
 )
 
+const (
+	BasePath = "/exchange"
+	IdPath = "/"
+	LatestPath = "/latest"
+	AveragePath = "/average"
+	EvaluationTriggerPath = "/evaluationtrigger"
+)
+
+var Db WebhooksStorage
+
 // handleRoot for /exchange
-func handleRoot(w http.ResponseWriter, r *http.Request) {
+func HandleRoot(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "POST" {
 		wh := Webhook{}
 		err := json.NewDecoder(r.Body).Decode(&wh)
@@ -17,7 +27,7 @@ func handleRoot(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		id, err := db.Add(wh)
+		id, err := Db.Add(wh)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)
 		}
@@ -28,7 +38,7 @@ func handleRoot(w http.ResponseWriter, r *http.Request) {
 }
 
 // handleId for /exchange/{id}
-func handleId(w http.ResponseWriter, r *http.Request) {
+func HandleId(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "GET" {
 		parts := strings.Split(r.URL.Path, "/")
 		if len(parts) != 3 {
@@ -36,7 +46,7 @@ func handleId(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		wh, ok := db.Get(parts[2])
+		wh, ok := Db.Get(parts[2])
 		if ok == false {
 			http.Error(w, "Not Found", http.StatusNotFound)
 			return
@@ -49,7 +59,7 @@ func handleId(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		ok := db.Remove(parts[2])
+		ok := Db.Remove(parts[2])
 		if ok == false {
 			http.Error(w, "Not Found", http.StatusNotFound)
 			return
@@ -60,16 +70,16 @@ func handleId(w http.ResponseWriter, r *http.Request) {
 }
 
 // handleLatest for /exchange/latest
-func handleLatest(w http.ResponseWriter, r *http.Request) {
+func HandleLatest(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintln(w, "hei_latest")
 }
 
 // handleAverage for /exchange/average
-func handleAverage(w http.ResponseWriter, r *http.Request) {
+func HandleAverage(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintln(w, "hei_average")
 }
 
 // handleEvaluationTrigger for /exchange/evaluationtrigger
-func handleEvaluationTrigger(w http.ResponseWriter, r *http.Request) {
+func HandleEvaluationTrigger(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintln(w, "hei_eval")
 }

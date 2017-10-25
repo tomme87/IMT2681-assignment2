@@ -3,17 +3,8 @@ package main
 import (
 	"net/http"
 	"os"
+	"IMT2681-assignment2/api"
 )
-
-const (
-	basePath = "/exchange"
-	idPath = "/"
-	latestPath = "/latest"
-	averagePath = "/average"
-	evaluationTriggerPath = "/evaluationtrigger"
-)
-
-var db WebhooksStorage
 
 func main() {
 	port := os.Getenv("PORT") // Get port from environment variable. Needed to deploy on heruko.
@@ -26,18 +17,18 @@ func main() {
 		uri = "mongodb://localhost"
 	}
 
-	db = &WebhooksMongoDB{
+	api.Db = &api.WebhooksMongoDB{
 		DatabaseURL: uri,
 		DatabaseName: "exchange",
 		WebhooksCollectionName: "webhooks",
 	}
-	db.Init()
+	api.Db.Init()
 
-	http.HandleFunc(basePath, handleRoot)
-	http.HandleFunc(basePath + idPath, handleId)
-	http.HandleFunc(basePath + latestPath, handleLatest)
-	http.HandleFunc(basePath + averagePath, handleAverage)
-	http.HandleFunc(basePath + evaluationTriggerPath, handleEvaluationTrigger)
+	http.HandleFunc(api.BasePath, api.HandleRoot)
+	http.HandleFunc(api.BasePath + api.IdPath, api.HandleId)
+	http.HandleFunc(api.BasePath + api.LatestPath, api.HandleLatest)
+	http.HandleFunc(api.BasePath + api.AveragePath, api.HandleAverage)
+	http.HandleFunc(api.BasePath + api.EvaluationTriggerPath, api.HandleEvaluationTrigger)
 
 	http.ListenAndServe(":"+port, nil)
 }

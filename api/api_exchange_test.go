@@ -1,4 +1,4 @@
-package main
+package api
 
 import (
 	"testing"
@@ -10,17 +10,17 @@ import (
 )
 
 func TestHandleRoot(t *testing.T) {
-	ts := httptest.NewServer(http.HandlerFunc(handleRoot))
+	ts := httptest.NewServer(http.HandlerFunc(HandleRoot))
 	defer ts.Close()
 
 
-	db = &WebhooksMongoDB{
+	Db = &WebhooksMongoDB{
 		DatabaseURL: "mongodb://tomme:twick493@192.168.2.60/WebhooksDB",
 		DatabaseName: "WebhooksDB",
 		WebhooksCollectionName: "webhooks",
 	}
 
-	db.Init()
+	Db.Init()
 
 	wh := Webhook{
 		WebhookURL: "http://test.url",
@@ -31,7 +31,7 @@ func TestHandleRoot(t *testing.T) {
 	}
 	jsonData, _ := json.Marshal(wh)
 
-	resp, err := http.Post(ts.URL + basePath, "application/json", bytes.NewBuffer(jsonData))
+	resp, err := http.Post(ts.URL + BasePath, "application/json", bytes.NewBuffer(jsonData))
 	if err != nil {
 		t.Errorf("Error executing %s request. Error %s", http.MethodPost, err)
 		return
@@ -40,15 +40,16 @@ func TestHandleRoot(t *testing.T) {
 	if resp.StatusCode != http.StatusOK {
 		body, _ := ioutil.ReadAll(resp.Body)
 		t.Errorf("Expected %d, but got %d, Body: %s", http.StatusOK, resp.StatusCode, body)
+		return
 	}
 
 	id, _ := ioutil.ReadAll(resp.Body)
 
 	ts.Close()
-	ts = httptest.NewServer(http.HandlerFunc(handleId))
+	ts = httptest.NewServer(http.HandlerFunc(HandleId))
 	defer ts.Close()
 
-	url := ts.URL + basePath + "/" + string(id)
+	url := ts.URL + BasePath + "/" + string(id)
 	resp, err = http.Get(url)
 	if err != nil {
 		t.Errorf("Error executing %s request. Error %s", http.MethodGet, err)

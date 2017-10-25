@@ -1,8 +1,8 @@
-package main
+package api
 
 import (
-	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
+	"gopkg.in/mgo.v2"
 )
 
 type WebhooksStorage interface {
@@ -11,15 +11,6 @@ type WebhooksStorage interface {
 	Count() int
 	Get(key string) (Webhook, bool)
 	Remove(key string) bool
-}
-
-type Webhook struct {
-	ID bson.ObjectId `json:"_id" bson:"_id"`
-	WebhookURL string
-	BaseCurrency string
-	TargetCurrency string
-	MinTriggerValue int
-	MaxTriggerValue int
 }
 
 type WebhooksMongoDB struct {
@@ -44,6 +35,12 @@ func (db *WebhooksMongoDB) Add(w Webhook) (string, error) {
 	defer session.Close()
 
 	w.ID = bson.NewObjectId()
+
+	err = w.Validate()
+	if err != nil {
+		return "", err
+	}
+
 	err = session.DB(db.DatabaseName).C(db.WebhooksCollectionName).Insert(w)
 	if err != nil {
 		return "", err
