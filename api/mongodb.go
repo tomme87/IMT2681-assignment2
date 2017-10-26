@@ -5,21 +5,23 @@ import (
 	"gopkg.in/mgo.v2"
 )
 
-type WebhooksStorage interface {
+type Storage interface {
 	Init()
 	Add(w Webhook) (string, error)
+	AddCurrency(f Fixer) error
 	Count() int
 	Get(key string) (Webhook, bool)
 	Remove(key string) bool
 }
 
-type WebhooksMongoDB struct {
+type MongoDB struct {
 	DatabaseURL string
 	DatabaseName string
 	WebhooksCollectionName string
+	ExchangeCollectionName string
 }
 
-func (db *WebhooksMongoDB) Init() {
+func (db *MongoDB) Init() {
 	session, err := mgo.Dial(db.DatabaseURL)
 	if err != nil {
 		panic(err)
@@ -27,7 +29,7 @@ func (db *WebhooksMongoDB) Init() {
 	defer session.Close()
 }
 
-func (db *WebhooksMongoDB) Add(w Webhook) (string, error) {
+func (db *MongoDB) Add(w Webhook) (string, error) {
 	session, err := mgo.Dial(db.DatabaseURL)
 	if err != nil {
 		panic(err)
@@ -49,11 +51,26 @@ func (db *WebhooksMongoDB) Add(w Webhook) (string, error) {
 	return w.ID.Hex(), nil
 }
 
-func (db *WebhooksMongoDB) Count() int {
+func (db *MongoDB) AddCurrency(f Fixer) error {
+	session, err := mgo.Dial(db.DatabaseURL)
+	if err != nil {
+		panic(err)
+	}
+	defer session.Close()
+
+	err = session.DB(db.DatabaseName).C(db.ExchangeCollectionName).Insert(f)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (db *MongoDB) Count() int {
 	return 0
 }
 
-func (db *WebhooksMongoDB) Get(key string) (Webhook, bool) {
+func (db *MongoDB) Get(key string) (Webhook, bool) {
 	session, err := mgo.Dial(db.DatabaseURL)
 	if err != nil {
 		panic(err)
@@ -78,7 +95,7 @@ func (db *WebhooksMongoDB) Get(key string) (Webhook, bool) {
 	return webhook, ok
 }
 
-func (db *WebhooksMongoDB) Remove(key string) bool {
+func (db *MongoDB) Remove(key string) bool {
 	session, err := mgo.Dial(db.DatabaseURL)
 	if err != nil {
 		panic(err)

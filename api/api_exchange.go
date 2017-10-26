@@ -15,7 +15,7 @@ const (
 	EvaluationTriggerPath = "/evaluationtrigger"
 )
 
-var Db WebhooksStorage
+var Db Storage
 
 // handleRoot for /exchange
 func HandleRoot(w http.ResponseWriter, r *http.Request) {

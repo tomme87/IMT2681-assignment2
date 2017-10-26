@@ -17,7 +17,7 @@ func main() {
 		uri = "mongodb://localhost"
 	}
 
-	api.Db = &api.WebhooksMongoDB{
+	api.Db = &api.MongoDB{
 		DatabaseURL: uri,
 		DatabaseName: "exchange",
 		WebhooksCollectionName: "webhooks",

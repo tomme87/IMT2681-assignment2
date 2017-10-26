@@ -14,7 +14,7 @@ func TestHandleRoot(t *testing.T) {
 	defer ts.Close()
 
 
-	Db = &WebhooksMongoDB{
+	Db = &MongoDB{
 		DatabaseURL: "mongodb://tomme:twick493@192.168.2.60/WebhooksDB",
 		DatabaseName: "WebhooksDB",
 		WebhooksCollectionName: "webhooks",
