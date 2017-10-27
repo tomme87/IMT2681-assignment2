@@ -21,6 +21,7 @@ func main() {
 		DatabaseURL: uri,
 		DatabaseName: "exchange",
 		WebhooksCollectionName: "webhooks",
+		ExchangeCollectionName: "currencyrates",
 	}
 	api.Db.Init()
 
@@ -29,6 +30,7 @@ func main() {
 	http.HandleFunc(api.BasePath + api.LatestPath, api.HandleLatest)
 	http.HandleFunc(api.BasePath + api.AveragePath, api.HandleAverage)
 	http.HandleFunc(api.BasePath + api.EvaluationTriggerPath, api.HandleEvaluationTrigger)
+	http.HandleFunc(api.BasePath + "/update", api.HandleUpdateTicker)
 
 	http.ListenAndServe(":"+port, nil)
 }

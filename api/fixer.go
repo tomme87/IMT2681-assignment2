@@ -18,7 +18,7 @@ func NewFixer(url ...string) (*Fixer, error) {
 	f := new(Fixer)
 
 	if len(url) == 0 {
-		url[0] = "http://api.fixer.io/latest"
+		url = append(url, "http://api.fixer.io/latest")
 	}
 
 	res, err := http.Get(url[0])

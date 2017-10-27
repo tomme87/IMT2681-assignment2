@@ -18,6 +18,7 @@ func TestHandleRoot(t *testing.T) {
 		DatabaseURL: "mongodb://tomme:twick493@192.168.2.60/WebhooksDB",
 		DatabaseName: "WebhooksDB",
 		WebhooksCollectionName: "webhooks",
+		ExchangeCollectionName: "currencyrates",
 	}
 
 	Db.Init()

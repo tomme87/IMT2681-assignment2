@@ -3,6 +3,7 @@ package api
 import (
 	"gopkg.in/mgo.v2/bson"
 	"gopkg.in/mgo.v2"
+	"fmt"
 )
 
 type Storage interface {
@@ -11,6 +12,9 @@ type Storage interface {
 	AddCurrency(f Fixer) error
 	Count() int
 	Get(key string) (Webhook, bool)
+	GetLatest() (Fixer, error)
+	GetLastWeek() ([]Fixer, error)
+	GetAll() []Webhook
 	Remove(key string) bool
 }
 
@@ -27,6 +31,19 @@ func (db *MongoDB) Init() {
 		panic(err)
 	}
 	defer session.Close()
+
+	index := mgo.Index{
+		Key: []string{"date"},
+		Unique: true,
+		DropDups: true,
+		Background: true,
+		Sparse: true,
+	}
+
+	err = session.DB(db.DatabaseName).C(db.ExchangeCollectionName).EnsureIndex(index)
+	if err != nil {
+		panic(err)
+	}
 }
 
 func (db *MongoDB) Add(w Webhook) (string, error) {
@@ -58,6 +75,7 @@ func (db *MongoDB) AddCurrency(f Fixer) error {
 	}
 	defer session.Close()
 
+	fmt.Println(f.Date)
 	err = session.DB(db.DatabaseName).C(db.ExchangeCollectionName).Insert(f)
 	if err != nil {
 		return err
@@ -93,6 +111,57 @@ func (db *MongoDB) Get(key string) (Webhook, bool) {
 	}
 
 	return webhook, ok
+}
+
+func (db *MongoDB) GetLatest() (Fixer, error) {
+	session, err := mgo.Dial(db.DatabaseURL)
+	if err != nil {
+		panic(err)
+	}
+	defer session.Close()
+
+	fixer := Fixer{}
+
+	err = session.DB(db.DatabaseName).C(db.ExchangeCollectionName).Find(bson.M{}).Sort("date", "1").One(&fixer)
+	if err != nil {
+		return fixer, err
+	}
+
+	return fixer, nil
+}
+
+func (db *MongoDB) GetLastWeek() ([]Fixer, error) {
+	session, err := mgo.Dial(db.DatabaseURL)
+	if err != nil {
+		panic(err)
+	}
+	defer session.Close()
+
+	fixers := []Fixer{}
+
+	err = session.DB(db.DatabaseName).C(db.ExchangeCollectionName).Find(bson.M{}).Sort("date", "1").Limit(7).All(&fixers)
+	if err != nil {
+		return fixers, err
+	}
+
+	return fixers, nil
+}
+
+func (db *MongoDB) GetAll() []Webhook {
+	session, err := mgo.Dial(db.DatabaseURL)
+	if err != nil {
+		panic(err)
+	}
+	defer session.Close()
+
+	all := []Webhook{}
+
+	err = session.DB(db.DatabaseName).C(db.WebhooksCollectionName).Find(bson.M{}).All(&all)
+	if err != nil {
+		return []Webhook{}
+	}
+
+	return all
 }
 
 func (db *MongoDB) Remove(key string) bool {
