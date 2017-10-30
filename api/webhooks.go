@@ -12,12 +12,13 @@ import (
 )
 
 type Webhook struct {
-	ID bson.ObjectId `json:"_id" bson:"_id"`
-	WebhookURL string
-	BaseCurrency string
-	TargetCurrency string
-	MinTriggerValue int
-	MaxTriggerValue int
+	ID 				bson.ObjectId 	`json:"-" bson:"_id"`
+	WebhookURL 		string 			`json:"webhookURL"`
+	BaseCurrency 	string 			`json:"baseCurrency"`
+	TargetCurrency 	string 			`json:"targetCurrency"`
+	CurrentRate 	float32 		`json:"currentRate,omitempty" bson:"-"`
+	MinTriggerValue float32 		`json:"minTriggerValue"`
+	MaxTriggerValue float32 		`json:"maxTriggerValue"`
 }
 
 func (wh *Webhook) Validate() error {
@@ -43,6 +44,17 @@ func (wh *Webhook) Validate() error {
 }
 
 func (wh *Webhook) Invoke() error {
+	fixers, err := Db.GetLatest(1)
+	if err != nil {
+		return err
+	}
+
+	rate, err := fixers[0].GetRate(wh.BaseCurrency, wh.TargetCurrency)
+	if err != nil {
+		return err
+	}
+	wh.CurrentRate = rate
+
 	jsonData, err := json.Marshal(wh)
 	if err != nil {
 		return err

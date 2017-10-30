@@ -20,6 +20,23 @@ func updateTicker() {
 		fmt.Println(err.Error())
 		return
 	}
+
+	webhooks := api.Db.GetAll()
+	for _, wh := range webhooks {
+		cRate, err := fixer.GetRate(wh.BaseCurrency, wh.TargetCurrency)
+		if err != nil {
+			fmt.Printf("Error getting rate for %s: %s", wh.ID.Hex(), err.Error())
+			continue
+		}
+
+		if cRate < wh.MinTriggerValue || cRate > wh.MaxTriggerValue {
+			err := wh.Invoke()
+			if err != nil {
+				fmt.Printf("Error invoking %s (%s): %s\n", wh.WebhookURL, wh.ID.Hex(), err.Error())
+				continue
+			}
+		}
+	}
 }
 
 
