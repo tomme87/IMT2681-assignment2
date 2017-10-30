@@ -3,7 +3,6 @@ package api
 import (
 	"gopkg.in/mgo.v2/bson"
 	"gopkg.in/mgo.v2"
-	"fmt"
 )
 
 type Storage interface {
@@ -75,7 +74,6 @@ func (db *MongoDB) AddCurrency(f Fixer) error {
 	}
 	defer session.Close()
 
-	fmt.Println(f.Date)
 	err = session.DB(db.DatabaseName).C(db.ExchangeCollectionName).Insert(f)
 	if err != nil {
 		return err
