@@ -74,7 +74,7 @@ func HandleId(w http.ResponseWriter, r *http.Request) {
 // HandleLatest for /exchange/latest
 func HandleLatest(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "POST" {
-		fixer, err := Db.GetLatest()
+		fixer, err := Db.GetLatest(1)
 		if err != nil {
 			http.Error(w, "unable to get latest: " + err.Error(), http.StatusInternalServerError)
 			return
@@ -87,7 +87,7 @@ func HandleLatest(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		rate, err := fixer.GetRate(wh.BaseCurrency, wh.TargetCurrency)
+		rate, err := fixer[0].GetRate(wh.BaseCurrency, wh.TargetCurrency)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
@@ -101,7 +101,34 @@ func HandleLatest(w http.ResponseWriter, r *http.Request) {
 
 // HandleAverage for /exchange/average
 func HandleAverage(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintln(w, "hei_average")
+	if r.Method == "POST" {
+		fixers, err := Db.GetLatest(3)
+		if err != nil {
+			http.Error(w, "unable to get latest: " + err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		wh := Webhook{}
+		err = json.NewDecoder(r.Body).Decode(&wh)
+		if err != nil {
+			http.Error(w, "unable to decode: " + err.Error(), http.StatusBadRequest)
+			return
+		}
+
+		total := float32(0)
+		for _, fixer := range fixers {
+			rate, err := fixer.GetRate(wh.BaseCurrency, wh.TargetCurrency)
+			if err != nil {
+				http.Error(w, err.Error(), http.StatusBadRequest)
+				return
+			}
+			total += rate
+		}
+
+		fmt.Fprint(w, total/float32(len(fixers)))
+	} else {
+		http.Error(w, "Not implemted", http.StatusNotImplemented)
+	}
 }
 
 // HandleEvaluationTrigger for /exchange/evaluationtrigger This invokes all webhooks.

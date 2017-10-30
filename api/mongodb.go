@@ -11,8 +11,7 @@ type Storage interface {
 	AddCurrency(f Fixer) error
 	Count() int
 	Get(key string) (Webhook, bool)
-	GetLatest() (Fixer, error)
-	GetLastWeek() ([]Fixer, error)
+	GetLatest(int) ([]Fixer, error)
 	GetAll() []Webhook
 	Remove(key string) bool
 }
@@ -111,24 +110,7 @@ func (db *MongoDB) Get(key string) (Webhook, bool) {
 	return webhook, ok
 }
 
-func (db *MongoDB) GetLatest() (Fixer, error) {
-	session, err := mgo.Dial(db.DatabaseURL)
-	if err != nil {
-		panic(err)
-	}
-	defer session.Close()
-
-	fixer := Fixer{}
-
-	err = session.DB(db.DatabaseName).C(db.ExchangeCollectionName).Find(bson.M{}).Sort("date", "1").One(&fixer)
-	if err != nil {
-		return fixer, err
-	}
-
-	return fixer, nil
-}
-
-func (db *MongoDB) GetLastWeek() ([]Fixer, error) {
+func (db *MongoDB) GetLatest(days int) ([]Fixer, error) {
 	session, err := mgo.Dial(db.DatabaseURL)
 	if err != nil {
 		panic(err)
@@ -137,7 +119,7 @@ func (db *MongoDB) GetLastWeek() ([]Fixer, error) {
 
 	fixers := []Fixer{}
 
-	err = session.DB(db.DatabaseName).C(db.ExchangeCollectionName).Find(bson.M{}).Sort("date", "1").Limit(7).All(&fixers)
+	err = session.DB(db.DatabaseName).C(db.ExchangeCollectionName).Find(bson.M{}).Sort("date", "1").Limit(days).All(&fixers)
 	if err != nil {
 		return fixers, err
 	}
