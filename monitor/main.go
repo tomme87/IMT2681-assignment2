@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/jasonlvhit/gocron"
-	"IMT2681-assignment2/api"
+	"github.com/tomme87/IMT2681-assignment2/api"
 	"os"
 )
 
