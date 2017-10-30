@@ -28,6 +28,7 @@ func main() {
 		DatabaseURL: uri,
 		DatabaseName: "exchange",
 		WebhooksCollectionName: "webhooks",
+		ExchangeCollectionName: "currencyrates",
 	}
 	api.Db.Init()
 
