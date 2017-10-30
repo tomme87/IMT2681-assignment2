@@ -30,6 +30,7 @@ func updateTicker() {
 		}
 
 		if cRate < wh.MinTriggerValue || cRate > wh.MaxTriggerValue {
+			wh.CurrentRate = cRate
 			err := wh.Invoke()
 			if err != nil {
 				fmt.Printf("Error invoking %s (%s): %s\n", wh.WebhookURL, wh.ID.Hex(), err.Error())
