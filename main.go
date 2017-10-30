@@ -3,7 +3,7 @@ package main
 import (
 	"net/http"
 	"os"
-	"IMT2681-assignment2/api"
+	"./api"
 )
 
 func main() {
