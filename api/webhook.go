@@ -44,16 +44,19 @@ func (wh *Webhook) Validate() error {
 }
 
 func (wh *Webhook) Invoke() error {
-	fixers, err := Db.GetLatest(1)
+	/*fixers, err := Db.GetLatest(1)
 	if err != nil {
 		return err
-	}
+	}*/
 
-	rate, err := fixers[0].GetRate(wh.BaseCurrency, wh.TargetCurrency)
+	/*
+	rate, err := f.GetRate(wh.BaseCurrency, wh.TargetCurrency)
 	if err != nil {
 		return err
 	}
-	wh.CurrentRate = rate
+	*/
+
+	//wh.CurrentRate = rate
 
 	jsonData, err := json.Marshal(wh)
 	if err != nil {
