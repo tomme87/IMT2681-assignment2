@@ -26,7 +26,7 @@ func main() {
 	api.Db.Init()
 
 	http.HandleFunc(api.BasePath, api.HandleRoot)
-	http.HandleFunc(api.BasePath + api.IDPath, api.HandleId)
+	http.HandleFunc(api.BasePath + api.IDPath, api.HandleID)
 	http.HandleFunc(api.BasePath + api.LatestPath, api.HandleLatest)
 	http.HandleFunc(api.BasePath + api.AveragePath, api.HandleAverage)
 	http.HandleFunc(api.BasePath + api.EvaluationTriggerPath, api.HandleEvaluationTrigger)

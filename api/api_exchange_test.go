@@ -77,7 +77,7 @@ func TestHandleRoot_ID(t *testing.T) {
 	id, _ := ioutil.ReadAll(resp.Body)
 
 	ts.Close()
-	ts = httptest.NewServer(http.HandlerFunc(HandleId))
+	ts = httptest.NewServer(http.HandlerFunc(HandleID))
 	defer ts.Close()
 
 	url := ts.URL + BasePath + "/" + string(id)
