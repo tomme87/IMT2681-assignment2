@@ -86,6 +86,6 @@ func TestNewFixer(t *testing.T) {
 	}
 
 	if f.Rates["NOK"] != float32(9.4865) {
-		t.Errorf("Expected date 2017-10-26, got %s", f.Rates["NOK"])
+		t.Errorf("Expected date 2017-10-26, got %f", f.Rates["NOK"])
 	}
 }

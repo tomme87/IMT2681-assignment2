@@ -8,11 +8,11 @@ import (
 )
 
 const (
-	BasePath = "/exchange"
-	IdPath = "/"
-	LatestPath = "/latest"
-	AveragePath = "/average"
-	EvaluationTriggerPath = "/evaluationtrigger"
+	BasePath              = "/exchange" // BasePath is the root endpoint
+	IDPath                = "/" // IDPath The path to get webhook by id
+	LatestPath            = "/latest" // LatestPath path to get latest exchange rates
+	AveragePath           = "/average" // AveragePath path to get average exchange rates
+	EvaluationTriggerPath = "/evaluationtrigger" // EvaluationTriggerPath to trigger all webhooks
 )
 
 // Db the main Storage object
@@ -39,7 +39,7 @@ func HandleRoot(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// HandleId for /exchange/{id} Get info about webhook
+// HandleID for /exchange/{id} Get info about webhook
 func HandleId(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "GET" {
 		parts := strings.Split(r.URL.Path, "/")
