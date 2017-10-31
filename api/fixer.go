@@ -7,6 +7,7 @@ import (
 	"encoding/json"
 )
 
+// Fixer holds rates from fixer
 type Fixer struct {
 	Base string
 	Date string

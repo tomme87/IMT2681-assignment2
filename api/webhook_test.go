@@ -7,6 +7,7 @@ import (
 	"gopkg.in/mgo.v2/bson"
 )
 
+// TestWebhook_Validate tests the validate function
 func TestWebhook_Validate(t *testing.T) {
 	wh := Webhook{
 		ID: bson.NewObjectId(),
@@ -23,6 +24,7 @@ func TestWebhook_Validate(t *testing.T) {
 	}
 }
 
+// TestWebhook_invoke test invoking webhook.
 func TestWebhook_Invoke(t *testing.T) {
 	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != "POST" {

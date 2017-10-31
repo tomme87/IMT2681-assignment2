@@ -80,6 +80,11 @@ func HandleLatest(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
+		if len(fixer) < 1 {
+			http.Error(w, "did not find latest", http.StatusInternalServerError)
+			return
+		}
+
 		wh := Webhook{}
 		err = json.NewDecoder(r.Body).Decode(&wh)
 		if err != nil {
@@ -89,7 +94,7 @@ func HandleLatest(w http.ResponseWriter, r *http.Request) {
 
 		rate, err := fixer[0].GetRate(wh.BaseCurrency, wh.TargetCurrency)
 		if err != nil {
-			http.Error(w, err.Error(), http.StatusBadRequest)
+			http.Error(w, "unable to convert: " + err.Error(), http.StatusBadRequest)
 			return
 		}
 

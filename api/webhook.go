@@ -11,6 +11,7 @@ import (
 	"io/ioutil"
 )
 
+// Webhook datastructure of the webhook.
 type Webhook struct {
 	ID 				bson.ObjectId 	`json:"-" bson:"_id"`
 	WebhookURL 		string 			`json:"webhookURL"`
@@ -21,6 +22,7 @@ type Webhook struct {
 	MaxTriggerValue float32 		`json:"maxTriggerValue"`
 }
 
+// Validate the data in the webhook.
 func (wh *Webhook) Validate() error {
 	if wh.ID.Hex() == "" || wh.WebhookURL == "" || wh.BaseCurrency == "" || wh.TargetCurrency == "" ||
 		wh.MinTriggerValue < 0 || wh.MaxTriggerValue < 0 {
@@ -43,21 +45,8 @@ func (wh *Webhook) Validate() error {
 	return nil
 }
 
+// Invoke the webhook (POST to webhookURL)
 func (wh *Webhook) Invoke() error {
-	/*fixers, err := Db.GetLatest(1)
-	if err != nil {
-		return err
-	}*/
-
-	/*
-	rate, err := f.GetRate(wh.BaseCurrency, wh.TargetCurrency)
-	if err != nil {
-		return err
-	}
-	*/
-
-	//wh.CurrentRate = rate
-
 	jsonData, err := json.Marshal(wh)
 	if err != nil {
 		return err

@@ -5,6 +5,7 @@ import (
 	"gopkg.in/mgo.v2"
 )
 
+// Storage interface to save/get webhooks and data from fixer.
 type Storage interface {
 	Init()
 	Add(w Webhook) (string, error)
@@ -16,6 +17,7 @@ type Storage interface {
 	Remove(key string) bool
 }
 
+// MongoDB struct for the mongoDB storage
 type MongoDB struct {
 	DatabaseURL string
 	DatabaseName string
@@ -23,6 +25,7 @@ type MongoDB struct {
 	ExchangeCollectionName string
 }
 
+// Init initializes the dabase
 func (db *MongoDB) Init() {
 	session, err := mgo.Dial(db.DatabaseURL)
 	if err != nil {
@@ -44,6 +47,7 @@ func (db *MongoDB) Init() {
 	}
 }
 
+// Add a new webhook to database
 func (db *MongoDB) Add(w Webhook) (string, error) {
 	session, err := mgo.Dial(db.DatabaseURL)
 	if err != nil {
@@ -66,6 +70,7 @@ func (db *MongoDB) Add(w Webhook) (string, error) {
 	return w.ID.Hex(), nil
 }
 
+// AddCurrency to the databse
 func (db *MongoDB) AddCurrency(f Fixer) error {
 	session, err := mgo.Dial(db.DatabaseURL)
 	if err != nil {
@@ -81,10 +86,12 @@ func (db *MongoDB) AddCurrency(f Fixer) error {
 	return nil
 }
 
+// Count get number of webhooks in database
 func (db *MongoDB) Count() int {
 	return 0
 }
 
+// Get webhook by ID
 func (db *MongoDB) Get(key string) (Webhook, bool) {
 	session, err := mgo.Dial(db.DatabaseURL)
 	if err != nil {
@@ -110,6 +117,7 @@ func (db *MongoDB) Get(key string) (Webhook, bool) {
 	return webhook, ok
 }
 
+// GetLatest latest rates from db
 func (db *MongoDB) GetLatest(days int) ([]Fixer, error) {
 	session, err := mgo.Dial(db.DatabaseURL)
 	if err != nil {
@@ -127,6 +135,7 @@ func (db *MongoDB) GetLatest(days int) ([]Fixer, error) {
 	return fixers, nil
 }
 
+// GetAll get all webhooks from db
 func (db *MongoDB) GetAll() []Webhook {
 	session, err := mgo.Dial(db.DatabaseURL)
 	if err != nil {
@@ -144,6 +153,7 @@ func (db *MongoDB) GetAll() []Webhook {
 	return all
 }
 
+// Remove a webhook by ID from db
 func (db *MongoDB) Remove(key string) bool {
 	session, err := mgo.Dial(db.DatabaseURL)
 	if err != nil {
