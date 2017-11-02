@@ -40,7 +40,7 @@ func TestMain(m *testing.M) {
 	Session.Close()
 
 	// Stop shuts down the temporary server and removes data on disk.
-	defer Server.Stop()
+	Server.Stop()
 
 	// call with result of m.Run()
 	os.Exit(retCode)
