@@ -42,7 +42,7 @@ func HandleRoot(w http.ResponseWriter, r *http.Request) {
 		}
 		fmt.Fprint(w, id)
 	} else {
-		http.Error(w, "Not implemted", http.StatusNotImplemented)
+		http.Error(w, "Not implemted", http.StatusBadRequest)
 	}
 }
 
