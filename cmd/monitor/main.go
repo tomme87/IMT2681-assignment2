@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"github.com/jasonlvhit/gocron"
 	"github.com/tomme87/IMT2681-assignment2/api"
+	"gopkg.in/mgo.v2"
 	"os"
 	"strings"
-	"gopkg.in/mgo.v2"
 )
 
 // updateTicker get the rates from fixer add to db and invoke the webhooks
@@ -47,8 +47,6 @@ func updateTicker() {
 	fmt.Println("done")
 }
 
-
-
 func main() {
 	uri := os.Getenv("MGO_URL")
 	if uri == "" {
@@ -56,8 +54,8 @@ func main() {
 	}
 
 	api.Db = &api.MongoDB{
-		DatabaseURL: uri,
-		DatabaseName: "exchange",
+		DatabaseURL:            uri,
+		DatabaseName:           "exchange",
 		WebhooksCollectionName: "webhooks",
 		ExchangeCollectionName: "currencyrates",
 	}
@@ -71,5 +69,5 @@ func main() {
 
 	updateTicker()
 	gocron.Every(1).Day().At("17:00").Do(updateTicker) // Run every day at 17:00
-	<- gocron.Start()
+	<-gocron.Start()
 }

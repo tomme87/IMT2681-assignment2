@@ -1,9 +1,9 @@
 package api
 
 import (
-	"net/http"
-	"fmt"
 	"encoding/json"
+	"fmt"
+	"net/http"
 	"strings"
 )
 
@@ -83,7 +83,7 @@ func HandleLatest(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "POST" {
 		fixer, err := Db.GetLatest(1)
 		if err != nil {
-			http.Error(w, "unable to get latest: " + err.Error(), http.StatusInternalServerError)
+			http.Error(w, "unable to get latest: "+err.Error(), http.StatusInternalServerError)
 			return
 		}
 
@@ -95,13 +95,13 @@ func HandleLatest(w http.ResponseWriter, r *http.Request) {
 		wh := Webhook{}
 		err = json.NewDecoder(r.Body).Decode(&wh)
 		if err != nil {
-			http.Error(w, "unable to decode: " + err.Error(), http.StatusBadRequest)
+			http.Error(w, "unable to decode: "+err.Error(), http.StatusBadRequest)
 			return
 		}
 
 		rate, err := fixer[0].GetRate(wh.BaseCurrency, wh.TargetCurrency)
 		if err != nil {
-			http.Error(w, "unable to convert: " + err.Error(), http.StatusBadRequest)
+			http.Error(w, "unable to convert: "+err.Error(), http.StatusBadRequest)
 			return
 		}
 
@@ -116,14 +116,14 @@ func HandleAverage(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "POST" {
 		fixers, err := Db.GetLatest(3)
 		if err != nil {
-			http.Error(w, "unable to get latest: " + err.Error(), http.StatusInternalServerError)
+			http.Error(w, "unable to get latest: "+err.Error(), http.StatusInternalServerError)
 			return
 		}
 
 		wh := Webhook{}
 		err = json.NewDecoder(r.Body).Decode(&wh)
 		if err != nil {
-			http.Error(w, "unable to decode: " + err.Error(), http.StatusBadRequest)
+			http.Error(w, "unable to decode: "+err.Error(), http.StatusBadRequest)
 			return
 		}
 

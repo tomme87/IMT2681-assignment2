@@ -1,10 +1,10 @@
 package main
 
 import (
-	"net/http"
-	"os"
 	"github.com/tomme87/IMT2681-assignment2/api"
 	"gopkg.in/mgo.v2"
+	"net/http"
+	"os"
 )
 
 func main() {
@@ -19,8 +19,8 @@ func main() {
 	}
 
 	api.Db = &api.MongoDB{
-		DatabaseURL: uri,
-		DatabaseName: "exchange",
+		DatabaseURL:            uri,
+		DatabaseName:           "exchange",
 		WebhooksCollectionName: "webhooks",
 		ExchangeCollectionName: "currencyrates",
 	}
@@ -34,10 +34,10 @@ func main() {
 	api.Db.Init()
 
 	http.HandleFunc(api.BasePath, api.HandleRoot)
-	http.HandleFunc(api.BasePath + api.IDPath, api.HandleID)
-	http.HandleFunc(api.BasePath + api.LatestPath, api.HandleLatest)
-	http.HandleFunc(api.BasePath + api.AveragePath, api.HandleAverage)
-	http.HandleFunc(api.BasePath + api.EvaluationTriggerPath, api.HandleEvaluationTrigger)
+	http.HandleFunc(api.BasePath+api.IDPath, api.HandleID)
+	http.HandleFunc(api.BasePath+api.LatestPath, api.HandleLatest)
+	http.HandleFunc(api.BasePath+api.AveragePath, api.HandleAverage)
+	http.HandleFunc(api.BasePath+api.EvaluationTriggerPath, api.HandleEvaluationTrigger)
 
 	http.ListenAndServe(":"+port, nil)
 }

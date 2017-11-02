@@ -1,23 +1,22 @@
 package api
 
-
 import (
-	"testing"
-	"net/http/httptest"
-	"net/http"
-	"io/ioutil"
 	"bytes"
 	"encoding/json"
 	"gopkg.in/mgo.v2/bson"
+	"io/ioutil"
+	"net/http"
+	"net/http/httptest"
 	"strconv"
+	"testing"
 )
 
 func getTestWebhook() Webhook {
 	wh := Webhook{
-		ID: bson.NewObjectId(),
-		WebhookURL: "http://test.url",
-		BaseCurrency: "EUR",
-		TargetCurrency: "NOK",
+		ID:              bson.NewObjectId(),
+		WebhookURL:      "http://test.url",
+		BaseCurrency:    "EUR",
+		TargetCurrency:  "NOK",
 		MinTriggerValue: 0.2,
 		MaxTriggerValue: 1.3,
 	}
@@ -33,7 +32,7 @@ func TestHandleRoot_ID(t *testing.T) {
 
 	jsonData, _ := json.Marshal(wh)
 
-	resp, err := http.Post(ts.URL + BasePath, "application/json", bytes.NewBuffer(jsonData))
+	resp, err := http.Post(ts.URL+BasePath, "application/json", bytes.NewBuffer(jsonData))
 	if err != nil {
 		t.Errorf("Error executing %s request. Error %s", http.MethodPost, err)
 		return
@@ -73,7 +72,7 @@ func TestHandleRoot_ID(t *testing.T) {
 
 	if wh.WebhookURL != wh2.WebhookURL || wh.TargetCurrency != wh2.TargetCurrency ||
 		wh.BaseCurrency != wh2.BaseCurrency || wh.MaxTriggerValue != wh2.MaxTriggerValue ||
-			wh.MinTriggerValue != wh2.MinTriggerValue {
+		wh.MinTriggerValue != wh2.MinTriggerValue {
 		t.Errorf("input webhook %v, do not match output webhook %v", wh, wh2)
 	}
 }
@@ -87,12 +86,12 @@ func TestHandleLatest(t *testing.T) {
 		Base: "EUR",
 		Date: "2017-10-26",
 		Rates: map[string]float32{
-			"AUD":1.5248,"BGN":1.9558,"BRL":3.803,"CAD":1.5041,"CHF":1.1678,
-			"CNY":7.8003,"CZK":25.589,"DKK":7.4432,"GBP":0.8901,"HKD":9.1701,
-			"HRK":7.5155,"HUF":310.32,"IDR":15982.0,"ILS":4.1343,"INR":76.23,
-			"JPY":133.75,"KRW":1320.4,"MXN":22.368,"MYR":4.9762,"NOK":9.4865,
-			"NZD":1.7118,"PHP":60.939,"PLN":4.235,"RON":4.5983,"RUB":67.76,
-			"SEK":9.7218,"SGD":1.601,"THB":38.973,"TRY":4.4338,"USD":1.1753,"ZAR":16.739},
+			"AUD": 1.5248, "BGN": 1.9558, "BRL": 3.803, "CAD": 1.5041, "CHF": 1.1678,
+			"CNY": 7.8003, "CZK": 25.589, "DKK": 7.4432, "GBP": 0.8901, "HKD": 9.1701,
+			"HRK": 7.5155, "HUF": 310.32, "IDR": 15982.0, "ILS": 4.1343, "INR": 76.23,
+			"JPY": 133.75, "KRW": 1320.4, "MXN": 22.368, "MYR": 4.9762, "NOK": 9.4865,
+			"NZD": 1.7118, "PHP": 60.939, "PLN": 4.235, "RON": 4.5983, "RUB": 67.76,
+			"SEK": 9.7218, "SGD": 1.601, "THB": 38.973, "TRY": 4.4338, "USD": 1.1753, "ZAR": 16.739},
 	}
 
 	Db.AddCurrency(f)
@@ -100,7 +99,7 @@ func TestHandleLatest(t *testing.T) {
 	Db.AddCurrency(f)
 
 	latest := Webhook{
-		BaseCurrency: "EUR",
+		BaseCurrency:   "EUR",
 		TargetCurrency: "NOK",
 	}
 	jsonData, err := json.Marshal(latest)
@@ -109,7 +108,7 @@ func TestHandleLatest(t *testing.T) {
 		return
 	}
 
-	resp, err := http.Post(ts.URL + BasePath + LatestPath, "application/json", bytes.NewBuffer(jsonData))
+	resp, err := http.Post(ts.URL+BasePath+LatestPath, "application/json", bytes.NewBuffer(jsonData))
 	if err != nil {
 		t.Errorf("Unable to get latest: %s", err.Error())
 		return
@@ -132,4 +131,3 @@ func TestHandleLatest(t *testing.T) {
 		t.Errorf("Rate should be %f, got %f", float32(9.4865), float32(rate))
 	}
 }
-

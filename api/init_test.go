@@ -1,10 +1,10 @@
 package api
 
 import (
-	"testing"
+	"gopkg.in/mgo.v2/dbtest"
 	"io/ioutil"
 	"os"
-	"gopkg.in/mgo.v2/dbtest"
+	"testing"
 )
 
 // This was taken from https://medium.com/@mvmaasakkers/writing-integration-tests-with-mongodb-support-231580a566cd
@@ -17,7 +17,7 @@ var Server dbtest.DBServer
 // TestMain wraps all tests with the needed initialized mock DB and fixtures
 func TestMain(m *testing.M) {
 	Db = &MongoDB{
-		DatabaseName: "exchange_test",
+		DatabaseName:           "exchange_test",
 		WebhooksCollectionName: "webhooks",
 		ExchangeCollectionName: "currencyrates",
 	}

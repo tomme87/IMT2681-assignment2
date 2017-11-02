@@ -1,10 +1,10 @@
 package api
 
 import (
-	"testing"
+	"fmt"
 	"net/http"
 	"net/http/httptest"
-	"fmt"
+	"testing"
 )
 
 // TestFixer_GetRate to test getting the rate from fixer data.
@@ -13,12 +13,12 @@ func TestFixer_GetRate(t *testing.T) {
 		Base: "EUR",
 		Date: "2017-10-26",
 		Rates: map[string]float32{
-			"AUD":1.5248,"BGN":1.9558,"BRL":3.803,"CAD":1.5041,"CHF":1.1678,
-			"CNY":7.8003,"CZK":25.589,"DKK":7.4432,"GBP":0.8901,"HKD":9.1701,
-			"HRK":7.5155,"HUF":310.32,"IDR":15982.0,"ILS":4.1343,"INR":76.23,
-			"JPY":133.75,"KRW":1320.4,"MXN":22.368,"MYR":4.9762,"NOK":9.4865,
-			"NZD":1.7118,"PHP":60.939,"PLN":4.235,"RON":4.5983,"RUB":67.76,
-			"SEK":9.7218,"SGD":1.601,"THB":38.973,"TRY":4.4338,"USD":1.1753,"ZAR":16.739},
+			"AUD": 1.5248, "BGN": 1.9558, "BRL": 3.803, "CAD": 1.5041, "CHF": 1.1678,
+			"CNY": 7.8003, "CZK": 25.589, "DKK": 7.4432, "GBP": 0.8901, "HKD": 9.1701,
+			"HRK": 7.5155, "HUF": 310.32, "IDR": 15982.0, "ILS": 4.1343, "INR": 76.23,
+			"JPY": 133.75, "KRW": 1320.4, "MXN": 22.368, "MYR": 4.9762, "NOK": 9.4865,
+			"NZD": 1.7118, "PHP": 60.939, "PLN": 4.235, "RON": 4.5983, "RUB": 67.76,
+			"SEK": 9.7218, "SGD": 1.601, "THB": 38.973, "TRY": 4.4338, "USD": 1.1753, "ZAR": 16.739},
 	}
 
 	rate, err := f.GetRate("EUR", "NOK")
@@ -37,8 +37,8 @@ func TestFixer_GetRate(t *testing.T) {
 		return
 	}
 
-	if rate != 1 / float32(9.4865) {
-		t.Errorf("Expected rate %f, got %f", 1 / float32(9.4865), rate)
+	if rate != 1/float32(9.4865) {
+		t.Errorf("Expected rate %f, got %f", 1/float32(9.4865), rate)
 	}
 
 	rate, err = f.GetRate("SEK", "NOK")
@@ -47,8 +47,8 @@ func TestFixer_GetRate(t *testing.T) {
 		return
 	}
 
-	if rate != float32(9.4865) * (1 / float32(9.7218)) {
-		t.Errorf("Expected rate %f, got %f", float32(9.4865) * (1 / float32(9.7218)), rate)
+	if rate != float32(9.4865)*(1/float32(9.7218)) {
+		t.Errorf("Expected rate %f, got %f", float32(9.4865)*(1/float32(9.7218)), rate)
 	}
 }
 

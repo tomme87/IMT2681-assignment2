@@ -1,8 +1,8 @@
 package api
 
 import (
-	"gopkg.in/mgo.v2/bson"
 	"gopkg.in/mgo.v2"
+	"gopkg.in/mgo.v2/bson"
 )
 
 // Session Make the mongoDB session a global variable
@@ -24,8 +24,8 @@ type Storage interface {
 
 // MongoDB struct for the mongoDB storage
 type MongoDB struct {
-	DatabaseURL string
-	DatabaseName string
+	DatabaseURL            string
+	DatabaseName           string
 	WebhooksCollectionName string
 	ExchangeCollectionName string
 }
@@ -43,11 +43,11 @@ func (db *MongoDB) GetDbName() string {
 // Init initializes the dabase
 func (db *MongoDB) Init() {
 	index := mgo.Index{
-		Key: []string{"date"},
-		Unique: true,
-		DropDups: true,
+		Key:        []string{"date"},
+		Unique:     true,
+		DropDups:   true,
 		Background: true,
-		Sparse: true,
+		Sparse:     true,
 	}
 
 	err := Session.DB(db.DatabaseName).C(db.ExchangeCollectionName).EnsureIndex(index)

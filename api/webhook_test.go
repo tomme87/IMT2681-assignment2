@@ -1,27 +1,27 @@
 package api
 
 import (
-	"testing"
-	"net/http/httptest"
-	"net/http"
-	"gopkg.in/mgo.v2/bson"
 	"encoding/json"
+	"gopkg.in/mgo.v2/bson"
+	"net/http"
+	"net/http/httptest"
+	"testing"
 )
 
 // TestWebhook_Validate tests the validate function
 func TestWebhook_Validate(t *testing.T) {
 	wh := Webhook{
-		ID: bson.NewObjectId(),
-		WebhookURL: "http://test.url",
-		BaseCurrency: "USD",
-		TargetCurrency: "NOK",
+		ID:              bson.NewObjectId(),
+		WebhookURL:      "http://test.url",
+		BaseCurrency:    "USD",
+		TargetCurrency:  "NOK",
 		MinTriggerValue: 0.2,
 		MaxTriggerValue: 1.3,
 	}
 
 	err := wh.Validate()
 	if err != nil {
-		t.Errorf("Unable to validate: %s",err.Error())
+		t.Errorf("Unable to validate: %s", err.Error())
 	}
 }
 
@@ -46,10 +46,10 @@ func TestWebhook_Invoke(t *testing.T) {
 	defer ts.Close()
 
 	wh := Webhook{
-		WebhookURL: ts.URL,
-		BaseCurrency: "USD",
-		TargetCurrency: "NOK",
-		CurrentRate: 9.5348,
+		WebhookURL:      ts.URL,
+		BaseCurrency:    "USD",
+		TargetCurrency:  "NOK",
+		CurrentRate:     9.5348,
 		MinTriggerValue: 0.2,
 		MaxTriggerValue: 1.3,
 	}

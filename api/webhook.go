@@ -1,25 +1,25 @@
 package api
 
 import (
-	"gopkg.in/mgo.v2/bson"
-	"errors"
-	"net/url"
-	"net/http"
-	"encoding/json"
 	"bytes"
+	"encoding/json"
+	"errors"
 	"fmt"
+	"gopkg.in/mgo.v2/bson"
 	"io/ioutil"
+	"net/http"
+	"net/url"
 )
 
 // Webhook datastructure of the webhook.
 type Webhook struct {
-	ID 				bson.ObjectId 	`json:"-" bson:"_id"`
-	WebhookURL 		string 			`json:"webhookURL"`
-	BaseCurrency 	string 			`json:"baseCurrency"`
-	TargetCurrency 	string 			`json:"targetCurrency"`
-	CurrentRate 	float32 		`json:"currentRate,omitempty" bson:"-"`
-	MinTriggerValue float32 		`json:"minTriggerValue"`
-	MaxTriggerValue float32 		`json:"maxTriggerValue"`
+	ID              bson.ObjectId `json:"-" bson:"_id"`
+	WebhookURL      string        `json:"webhookURL"`
+	BaseCurrency    string        `json:"baseCurrency"`
+	TargetCurrency  string        `json:"targetCurrency"`
+	CurrentRate     float32       `json:"currentRate,omitempty" bson:"-"`
+	MinTriggerValue float32       `json:"minTriggerValue"`
+	MaxTriggerValue float32       `json:"maxTriggerValue"`
 }
 
 // Validate the data in the webhook.

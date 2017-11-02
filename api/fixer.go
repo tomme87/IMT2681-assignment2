@@ -1,16 +1,16 @@
 package api
 
 import (
-	"net/http"
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	"encoding/json"
+	"net/http"
 )
 
 // Fixer holds rates from fixer
 type Fixer struct {
-	Base string
-	Date string
+	Base  string
+	Date  string
 	Rates map[string]float32
 }
 
@@ -46,7 +46,7 @@ func (f *Fixer) GetRate(base string, target string) (float32, error) {
 		return 0, fmt.Errorf("not av valid base: %s", base)
 	}
 
-	if _, ok := f.Rates[target]; !ok && f.Base != target{
+	if _, ok := f.Rates[target]; !ok && f.Base != target {
 		return 0, fmt.Errorf("not a valid target: %s", target)
 	}
 
