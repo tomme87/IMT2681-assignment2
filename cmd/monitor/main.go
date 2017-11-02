@@ -6,8 +6,10 @@ import (
 	"github.com/tomme87/IMT2681-assignment2/api"
 	"os"
 	"strings"
+	"gopkg.in/mgo.v2"
 )
 
+// updateTicker get the rates from fixer add to db and invoke the webhooks
 func updateTicker() {
 	fmt.Println("Fetching new exchange rates.")
 	fixer, err := api.NewFixer()
@@ -59,9 +61,15 @@ func main() {
 		WebhooksCollectionName: "webhooks",
 		ExchangeCollectionName: "currencyrates",
 	}
+	session, err := mgo.Dial(api.Db.GetDbURL())
+	if err != nil {
+		panic("Unable to contact DB: " + err.Error())
+	}
+	api.Session = session
+	defer api.Session.Close()
 	api.Db.Init()
 
 	updateTicker()
-	gocron.Every(1).Day().At("17:00").Do(updateTicker)
+	gocron.Every(1).Day().At("17:00").Do(updateTicker) // Run every day at 17:00
 	<- gocron.Start()
 }

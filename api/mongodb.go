@@ -5,6 +5,9 @@ import (
 	"gopkg.in/mgo.v2"
 )
 
+// Make the session a global variable
+var Session *mgo.Session
+
 // Storage interface to save/get webhooks and data from fixer.
 type Storage interface {
 	Init()
@@ -15,6 +18,8 @@ type Storage interface {
 	GetLatest(int) ([]Fixer, error)
 	GetAll() []Webhook
 	Remove(key string) bool
+	GetDbURL() string
+	GetDbName() string
 }
 
 // MongoDB struct for the mongoDB storage
@@ -25,14 +30,18 @@ type MongoDB struct {
 	ExchangeCollectionName string
 }
 
+// GetDbURL get tha URL for database
+func (db *MongoDB) GetDbURL() string {
+	return db.DatabaseURL
+}
+
+// GetDbName get the name for database
+func (db *MongoDB) GetDbName() string {
+	return db.DatabaseName
+}
+
 // Init initializes the dabase
 func (db *MongoDB) Init() {
-	session, err := mgo.Dial(db.DatabaseURL)
-	if err != nil {
-		panic(err)
-	}
-	defer session.Close()
-
 	index := mgo.Index{
 		Key: []string{"date"},
 		Unique: true,
@@ -41,7 +50,7 @@ func (db *MongoDB) Init() {
 		Sparse: true,
 	}
 
-	err = session.DB(db.DatabaseName).C(db.ExchangeCollectionName).EnsureIndex(index)
+	err := Session.DB(db.DatabaseName).C(db.ExchangeCollectionName).EnsureIndex(index)
 	if err != nil {
 		panic(err)
 	}
@@ -49,20 +58,14 @@ func (db *MongoDB) Init() {
 
 // Add a new webhook to database
 func (db *MongoDB) Add(w Webhook) (string, error) {
-	session, err := mgo.Dial(db.DatabaseURL)
-	if err != nil {
-		panic(err)
-	}
-	defer session.Close()
-
 	w.ID = bson.NewObjectId()
 
-	err = w.Validate()
+	err := w.Validate()
 	if err != nil {
 		return "", err
 	}
 
-	err = session.DB(db.DatabaseName).C(db.WebhooksCollectionName).Insert(w)
+	err = Session.DB(db.DatabaseName).C(db.WebhooksCollectionName).Insert(w)
 	if err != nil {
 		return "", err
 	}
@@ -72,13 +75,7 @@ func (db *MongoDB) Add(w Webhook) (string, error) {
 
 // AddCurrency to the databse
 func (db *MongoDB) AddCurrency(f Fixer) error {
-	session, err := mgo.Dial(db.DatabaseURL)
-	if err != nil {
-		panic(err)
-	}
-	defer session.Close()
-
-	err = session.DB(db.DatabaseName).C(db.ExchangeCollectionName).Insert(f)
+	err := Session.DB(db.DatabaseName).C(db.ExchangeCollectionName).Insert(f)
 	if err != nil {
 		return err
 	}
@@ -93,12 +90,6 @@ func (db *MongoDB) Count() int {
 
 // Get webhook by ID
 func (db *MongoDB) Get(key string) (Webhook, bool) {
-	session, err := mgo.Dial(db.DatabaseURL)
-	if err != nil {
-		panic(err)
-	}
-	defer session.Close()
-
 	webhook := Webhook{}
 	ok := true
 
@@ -108,7 +99,7 @@ func (db *MongoDB) Get(key string) (Webhook, bool) {
 
 	id := bson.ObjectIdHex(key)
 
-	err = session.DB(db.DatabaseName).C(db.WebhooksCollectionName).
+	err := Session.DB(db.DatabaseName).C(db.WebhooksCollectionName).
 		Find(bson.M{"_id": id}).One(&webhook)
 	if err != nil {
 		ok = false
@@ -119,15 +110,9 @@ func (db *MongoDB) Get(key string) (Webhook, bool) {
 
 // GetLatest latest rates from db
 func (db *MongoDB) GetLatest(days int) ([]Fixer, error) {
-	session, err := mgo.Dial(db.DatabaseURL)
-	if err != nil {
-		panic(err)
-	}
-	defer session.Close()
-
 	fixers := []Fixer{}
 
-	err = session.DB(db.DatabaseName).C(db.ExchangeCollectionName).Find(bson.M{}).Sort("date", "1").Limit(days).All(&fixers)
+	err := Session.DB(db.DatabaseName).C(db.ExchangeCollectionName).Find(bson.M{}).Sort("date", "1").Limit(days).All(&fixers)
 	if err != nil {
 		return fixers, err
 	}
@@ -137,15 +122,9 @@ func (db *MongoDB) GetLatest(days int) ([]Fixer, error) {
 
 // GetAll get all webhooks from db
 func (db *MongoDB) GetAll() []Webhook {
-	session, err := mgo.Dial(db.DatabaseURL)
-	if err != nil {
-		panic(err)
-	}
-	defer session.Close()
-
 	all := []Webhook{}
 
-	err = session.DB(db.DatabaseName).C(db.WebhooksCollectionName).Find(bson.M{}).All(&all)
+	err := Session.DB(db.DatabaseName).C(db.WebhooksCollectionName).Find(bson.M{}).All(&all)
 	if err != nil {
 		return []Webhook{}
 	}
@@ -155,12 +134,6 @@ func (db *MongoDB) GetAll() []Webhook {
 
 // Remove a webhook by ID from db
 func (db *MongoDB) Remove(key string) bool {
-	session, err := mgo.Dial(db.DatabaseURL)
-	if err != nil {
-		panic(err)
-	}
-	defer session.Close()
-
 	ok := true
 
 	if bson.IsObjectIdHex(key) == false {
@@ -169,7 +142,7 @@ func (db *MongoDB) Remove(key string) bool {
 
 	id := bson.ObjectIdHex(key)
 
-	err = session.DB(db.DatabaseName).C(db.WebhooksCollectionName).
+	err := Session.DB(db.DatabaseName).C(db.WebhooksCollectionName).
 		Remove(bson.M{"_id": id})
 	if err != nil {
 		ok = false

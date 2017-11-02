@@ -156,24 +156,3 @@ func HandleEvaluationTrigger(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Not implemted", http.StatusNotImplemented)
 	}
 }
-
-// HandleUpdateTicker get new data from fixer and insert to database. Used until scheduler.
-func HandleUpdateTicker(w http.ResponseWriter, r *http.Request) {
-	if r.Method == "GET" {
-		fixer, err := NewFixer()
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-
-		err = Db.AddCurrency(*fixer)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-
-		json.NewEncoder(w).Encode(fixer)
-	} else {
-		http.Error(w, "Not implemted", http.StatusNotImplemented)
-	}
-}

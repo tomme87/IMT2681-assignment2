@@ -8,34 +8,9 @@ import (
 	"io/ioutil"
 	"bytes"
 	"encoding/json"
-	"os"
 	"gopkg.in/mgo.v2/bson"
 	"strconv"
 )
-
-/*
-func cleanDB(db *MongoDB) {
-	session, _ := mgo.Dial(db.DatabaseURL)
-	session.DB(db.DatabaseName).C(db.WebhooksCollectionName).DropCollection()
-	session.DB(db.DatabaseName).C(db.ExchangeCollectionName).DropCollection()
-}
-*/
-
-func getTestDB() *MongoDB {
-	uri := os.Getenv("MGO_TEST_URL")
-	if uri == "" {
-		uri = "mongodb://localhost"
-	}
-
-	TDb := &MongoDB{
-		DatabaseURL: uri,
-		DatabaseName: "exchange_test",
-		WebhooksCollectionName: "webhooks",
-		ExchangeCollectionName: "currencyrates",
-	}
-	TDb.Init()
-	return TDb
-}
 
 func getTestWebhook() Webhook {
 	wh := Webhook{
@@ -49,14 +24,10 @@ func getTestWebhook() Webhook {
 	return wh
 }
 
+// TestHandleRoot_ID testing the root and root/id
 func TestHandleRoot_ID(t *testing.T) {
 	ts := httptest.NewServer(http.HandlerFunc(HandleRoot))
 	defer ts.Close()
-
-	Db = getTestDB()
-	Db.Init()
-
-	//cleanDB(Db.)
 
 	wh := getTestWebhook()
 
@@ -107,15 +78,11 @@ func TestHandleRoot_ID(t *testing.T) {
 	}
 }
 
+// TestHandleLatest testing the /latest
 func TestHandleLatest(t *testing.T) {
-	//ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request){}))
 	ts := httptest.NewServer(http.HandlerFunc(HandleLatest))
 	defer ts.Close()
 
-	Db = getTestDB()
-	Db.Init()
-
-	//wh := getTestWebhook()
 	f := Fixer{
 		Base: "EUR",
 		Date: "2017-10-26",
