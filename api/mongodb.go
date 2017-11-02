@@ -5,7 +5,7 @@ import (
 	"gopkg.in/mgo.v2"
 )
 
-// Make the session a global variable
+// Session Make the mongoDB session a global variable
 var Session *mgo.Session
 
 // Storage interface to save/get webhooks and data from fixer.
