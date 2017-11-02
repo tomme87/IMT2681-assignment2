@@ -47,6 +47,20 @@ func (wh *Webhook) Validate() error {
 
 // Invoke the webhook (POST to webhookURL)
 func (wh *Webhook) Invoke() error {
+	if wh.CurrentRate == 0 {
+		fixers, err := Db.GetLatest(1)
+		if err != nil {
+			return err
+		}
+
+		rate, err := fixers[0].GetRate(wh.BaseCurrency, wh.TargetCurrency)
+		if err != nil {
+			return err
+		}
+
+		wh.CurrentRate = rate
+	}
+
 	jsonData, err := json.Marshal(wh)
 	if err != nil {
 		return err
